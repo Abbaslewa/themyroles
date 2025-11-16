@@ -25,4 +25,4 @@ const makeCommits = async (n) => {
     await makeCommits(--n);
 };
 
-makeCommits(220);
+makeCommits(270);
