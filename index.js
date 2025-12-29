@@ -4,24 +4,25 @@ import jsonfile from "jsonfile";
 import simpleGit from "simple-git";
 
 const path = "./data.json";
-const git = simpleGit();
 
 const makeCommits = async (n) => {
-  for (let i = 0; i < n; i++) {
-    // Random date within last year
-    const daysAgo = random.int(0, 364);
-    const date = moment().subtract(daysAgo, "days").format();
+    if (n === 0) return simpleGit().push();
+
+    const x = random.int(0, 54);
+    const y = random.int(0, 6);
+    const date = moment().subtract(1, "y").add(1, "d").add(x, "w").add(y, "d").format();
 
     const data = { date };
+
     console.log(date);
+
     jsonfile.writeFileSync(path, data);
 
-    await git.add([path])
-             .commit("Commit at " + date, { "--date": date });
-  }
+    await simpleGit()
+        .add([path])
+        .commit("date", { "--date": date });
 
-  // Push all commits at the end
-  await git.push();
+    await makeCommits(--n);
 };
 
-makeCommits(300);
+makeCommits(500);
