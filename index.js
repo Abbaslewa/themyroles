@@ -3,26 +3,36 @@ import moment from "moment";
 import jsonfile from "jsonfile";
 import simpleGit from "simple-git";
 
-const path = "./data.json";
+const FILE_PATH = "./data.json";
+const git = simpleGit();
 
-const makeCommits = async (n) => {
-    if (n === 0) return simpleGit().push();
+const makeCommits = async (total = 600) => {
+  try {
+    for (let i = 0; i < total; i++) {
+      const x = random.int(0, 54);
+      const y = random.int(0, 6);
 
-    const x = random.int(0, 54);
-    const y = random.int(0, 6);
-    const date = moment().subtract(1, "y").add(1, "d").add(x, "w").add(y, "d").format();
+      const date = moment()
+        .subtract(1, "year")
+        .add(x, "weeks")
+        .add(y, "days")
+        .format();
 
-    const data = { date };
+      const data = { date };
 
-    console.log(date);
+      console.log(`Commit ${i + 1}: ${date}`);
 
-    jsonfile.writeFileSync(path, data);
+      jsonfile.writeFileSync(FILE_PATH, data);
 
-    await simpleGit()
-        .add([path])
-        .commit("date", { "--date": date });
+      await git.add(FILE_PATH);
+      await git.commit(`commit ${i + 1}`, { "--date": date });
+    }
 
-    await makeCommits(--n);
+    await git.push();
+    console.log("✅ 600 commits pushed successfully");
+  } catch (error) {
+    console.error("❌ Error:", error);
+  }
 };
 
-makeCommits(1000);
+makeCommits();
