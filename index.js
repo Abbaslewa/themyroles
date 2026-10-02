@@ -22,16 +22,26 @@ const makeCommit = (n) => {
 
   const data = { date };
 
-  console.log("Commit date:", date);
+  console.log(`Commit ${n}: ${date}`);
 
-  jsonfile.writeFile(path, data, () => {
+  jsonfile.writeFile(path, data, (err) => {
+    if (err) {
+      console.error("Error writing file:", err);
+      return;
+    }
+
     git
       .add([path])
-      .commit(date, { "--date": date }, () => {
+      .commit(date, { "--date": date }, (err) => {
+        if (err) {
+          console.error("Git commit error:", err);
+          return;
+        }
+
         makeCommit(n - 1);
       });
   });
 };
 
-// start commits
+// Start commits
 makeCommit(400);
