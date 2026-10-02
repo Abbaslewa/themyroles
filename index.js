@@ -34,4 +34,4 @@ const makeCommit = (n) => {
 };
 
 // start commits
-makeCommit(300);
+makeCommit(400);
